@@ -12,11 +12,11 @@ import (
 )
 
 type Check struct {
-	T            *testing.T
+	T            testing.TB
 	AbortOnError bool
 }
 
-func New(t *testing.T) *Check {
+func New(t testing.TB) *Check {
 	return &Check{T: t}
 }
 
