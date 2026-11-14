@@ -3,6 +3,7 @@ package check
 import (
 	"bytes"
 	"fmt"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -67,6 +68,31 @@ func (c *Check) NotError(value error, userMsg ...any) bool {
 	return true
 }
 
+func (c *Check) Nil(value any, userMsg ...any) bool {
+	c.T.Helper()
+
+	if !isNil(value) {
+		c.Fail("value is not nil", formatMessageAndArgs(userMsg...),
+			[]string{
+				formatValueLine("value:", prettyPrint(value)),
+			})
+		return false
+	}
+
+	return true
+}
+
+func (c *Check) NotNil(value any, userMsg ...any) bool {
+	c.T.Helper()
+
+	if isNil(value) {
+		c.Fail("value is nil", formatMessageAndArgs(userMsg...), nil)
+		return false
+	}
+
+	return true
+}
+
 func (c *Check) Equal(value1, value2 any, userMsg ...any) bool {
 	c.T.Helper()
 
@@ -75,6 +101,21 @@ func (c *Check) Equal(value1, value2 any, userMsg ...any) bool {
 			[]string{
 				formatValueLine("value:   ", prettyPrint(value2)),
 				formatValueLine("expected:", prettyPrint(value1)),
+			})
+
+		return false
+	}
+
+	return true
+}
+
+func (c *Check) NotEqual(value1, value2 any, userMsg ...any) bool {
+	c.T.Helper()
+
+	if cmp.Equal(value1, value2) {
+		c.Fail("values are equal", formatMessageAndArgs(userMsg...),
+			[]string{
+				formatValueLine("values:", prettyPrint(value1)),
 			})
 
 		return false
@@ -147,4 +188,20 @@ func prettyPrint(value any) string {
 func indent(s string, level int) string {
 	padding := strings.Repeat(" ", level*4)
 	return padding + strings.Replace(s, "\n", "\n"+padding, -1)
+}
+
+func isNil(value any) bool {
+	if value == nil {
+		return true
+	}
+
+	rValue := reflect.ValueOf(value)
+
+	switch rValue.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map,
+		reflect.Pointer, reflect.Slice, reflect.UnsafePointer:
+		return rValue.IsNil()
+	}
+
+	return false
 }
