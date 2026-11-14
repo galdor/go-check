@@ -178,7 +178,7 @@ func prettyPrint(value any) string {
 	var buf bytes.Buffer
 
 	if err := pp.PrintTo(&buf, value); err != nil {
-		panic(fmt.Sprintf("cannot pretty print value %#v: %w", value, err))
+		panic(fmt.Sprintf("cannot pretty print value %#v: %v", value, err))
 	}
 
 	s := buf.String()
