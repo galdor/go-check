@@ -166,12 +166,19 @@ func (c *Check) printFailureLine(line string) {
 
 }
 
-func formatMessageAndArgs(msg ...any) string {
-	if len(msg) == 0 {
-		return ""
+func formatMessageAndArgs(msgAndArgs ...any) string {
+	var msg string
+
+	switch len(msgAndArgs) {
+	case 0:
+		msg = ""
+	case 1:
+		msg = msgAndArgs[0].(string)
+	default:
+		msg = fmt.Sprintf(msgAndArgs[0].(string), msgAndArgs[1:]...)
 	}
 
-	return fmt.Sprintf(msg[0].(string), msg[1:]...)
+	return msg
 }
 
 func prettyPrint(value any) string {
