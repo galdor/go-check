@@ -2,6 +2,7 @@ package check
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"reflect"
 	"strings"
@@ -48,6 +49,43 @@ func (c *Check) Error(value error, userMsg ...any) bool {
 	if value == nil {
 		c.Fail("value is not an error", formatMessageAndArgs(userMsg...), nil)
 		return false
+	}
+
+	return true
+}
+
+func (c *Check) ErrorIs(value, expectedErr error, userMsg ...any) bool {
+	c.T.Helper()
+
+	if c.Error(value, userMsg...) {
+		if !errors.Is(value, expectedErr) {
+			c.Fail(fmt.Sprintf("value is not %q", expectedErr.Error()),
+				formatMessageAndArgs(userMsg...),
+				[]string{
+					formatValueLine("value:   ", prettyPrint(value)),
+					formatValueLine("error:   ", value.Error()),
+					formatValueLine("expected:", prettyPrint(expectedErr)),
+				})
+			return false
+		}
+	}
+
+	return true
+}
+
+func (c *Check) ErrorAs(value error, expectedErr any, userMsg ...any) bool {
+	c.T.Helper()
+
+	if c.Error(value, userMsg...) {
+		if !errors.As(value, expectedErr) {
+			c.Fail(fmt.Sprintf("value is not of type %T", expectedErr),
+				formatMessageAndArgs(userMsg...),
+				[]string{
+					formatValueLine("value:", prettyPrint(value)),
+					formatValueLine("error:", value.Error()),
+				})
+			return false
+		}
 	}
 
 	return true

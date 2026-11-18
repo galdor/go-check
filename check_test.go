@@ -2,8 +2,18 @@ package check
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 )
+
+var ErrTest = errors.New("test error")
+
+type TestErr struct {
+}
+
+func (err TestErr) Error() string {
+	return "test error"
+}
 
 func TestTrue(t *testing.T) {
 	check := New(t)
@@ -60,6 +70,21 @@ func TestError(t *testing.T) {
 	check := New(t)
 
 	check.Error(errors.New("test"))
+}
+
+func TestErrorIs(t *testing.T) {
+	check := New(t)
+
+	check.ErrorIs(ErrTest, ErrTest)
+	check.ErrorIs(fmt.Errorf("%w", ErrTest), ErrTest)
+}
+
+func TestErrorAs(t *testing.T) {
+	check := New(t)
+
+	var testErr TestErr
+	check.ErrorAs(TestErr{}, &testErr)
+	check.ErrorAs(fmt.Errorf("%w", TestErr{}), &testErr)
 }
 
 func TestNotError(t *testing.T) {

@@ -1,4 +1,4 @@
-all: build
+all: check test
 
 check: vet
 

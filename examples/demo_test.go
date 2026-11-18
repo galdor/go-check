@@ -7,6 +7,15 @@ import (
 	"go.n16f.net/check"
 )
 
+var ErrTest = errors.New("test error")
+
+type TestError struct {
+}
+
+func (err TestError) Error() string {
+	return "test error"
+}
+
 func TestAll(t *testing.T) {
 	check := check.New(t)
 
@@ -24,5 +33,8 @@ func TestAll(t *testing.T) {
 	)
 
 	check.Error(nil)
+	check.ErrorIs(errors.New("random error"), ErrTest)
+	var testErr TestError
+	check.ErrorAs(errors.New("random error"), &testErr)
 	check.NotError(errors.New("test error"))
 }
