@@ -2,13 +2,14 @@ package check
 
 import (
 	"bytes"
+	"cmp"
 	"errors"
 	"fmt"
 	"reflect"
 	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
+	gcmp "github.com/google/go-cmp/cmp"
 	"go.n16f.net/pp"
 )
 
@@ -134,7 +135,7 @@ func (c *Check) NotNil(value any, userMsg ...any) bool {
 func (c *Check) Equal(value1, value2 any, userMsg ...any) bool {
 	c.T.Helper()
 
-	if !cmp.Equal(value1, value2) {
+	if !gcmp.Equal(value1, value2) {
 		c.Fail("values are not equal", formatMessageAndArgs(userMsg...),
 			[]string{
 				formatValueLine("value:   ", prettyPrint(value2)),
@@ -150,10 +151,82 @@ func (c *Check) Equal(value1, value2 any, userMsg ...any) bool {
 func (c *Check) NotEqual(value1, value2 any, userMsg ...any) bool {
 	c.T.Helper()
 
-	if cmp.Equal(value1, value2) {
+	if gcmp.Equal(value1, value2) {
 		c.Fail("values are equal", formatMessageAndArgs(userMsg...),
 			[]string{
 				formatValueLine("values:", prettyPrint(value1)),
+			})
+
+		return false
+	}
+
+	return true
+}
+
+func (c *Check) Lesser[T cmp.Ordered](value1, value2 T, userMsg ...any) bool {
+	c.T.Helper()
+
+	if cmp.Compare(value1, value2) >= 0 {
+		c.Fail("value 1 is not lesser than value 2",
+			formatMessageAndArgs(userMsg...),
+			[]string{
+				formatValueLine("value 1:", prettyPrint(value1)),
+				formatValueLine("value 2:", prettyPrint(value2)),
+			})
+
+		return false
+	}
+
+	return true
+}
+
+func (c *Check) LesserOrEqual[T cmp.Ordered](
+	value1, value2 T, userMsg ...any,
+) bool {
+	c.T.Helper()
+
+	if cmp.Compare(value1, value2) > 0 {
+		c.Fail("value 1 is not lesser or equal to value 2",
+			formatMessageAndArgs(userMsg...),
+			[]string{
+				formatValueLine("value 1:", prettyPrint(value1)),
+				formatValueLine("value 2:", prettyPrint(value2)),
+			})
+
+		return false
+	}
+
+	return true
+}
+
+func (c *Check) Greater[T cmp.Ordered](value1, value2 T, userMsg ...any) bool {
+	c.T.Helper()
+
+	if cmp.Compare(value1, value2) <= 0 {
+		c.Fail("value 1 is not greater than value 2",
+			formatMessageAndArgs(userMsg...),
+			[]string{
+				formatValueLine("value 1:", prettyPrint(value1)),
+				formatValueLine("value 2:", prettyPrint(value2)),
+			})
+
+		return false
+	}
+
+	return true
+}
+
+func (c *Check) GreaterOrEqual[T cmp.Ordered](
+	value1, value2 T, userMsg ...any,
+) bool {
+	c.T.Helper()
+
+	if cmp.Compare(value1, value2) < 0 {
+		c.Fail("value 1 is not greater or equal to value 2",
+			formatMessageAndArgs(userMsg...),
+			[]string{
+				formatValueLine("value 1:", prettyPrint(value1)),
+				formatValueLine("value 2:", prettyPrint(value2)),
 			})
 
 		return false

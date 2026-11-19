@@ -56,6 +56,26 @@ func TestEqual(t *testing.T) {
 	)
 }
 
+func TestOrdering(t *testing.T) {
+	check := New(t)
+
+	check.Lesser(1, 2)
+	check.Lesser("abc", "bcd")
+
+	check.LesserOrEqual(1, 2)
+	check.LesserOrEqual(2, 2)
+	check.LesserOrEqual("foo", "foo2")
+	check.LesserOrEqual("foo", "foo")
+
+	check.Greater(3.0, 1.5)
+	check.Greater("abc", "abb")
+
+	check.GreaterOrEqual(3.0, 1.5)
+	check.GreaterOrEqual(3.0, 3.0)
+	check.GreaterOrEqual("abc", "abb")
+	check.GreaterOrEqual("abc", "abc")
+}
+
 func TestNotEqual(t *testing.T) {
 	check := New(t)
 

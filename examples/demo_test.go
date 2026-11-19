@@ -32,6 +32,11 @@ func TestAll(t *testing.T) {
 		map[string]int{"a": 1},
 	)
 
+	check.Lesser(10.0, 10.0)
+	check.LesserOrEqual(10.0, 3.14)
+	check.Greater(-50, -50)
+	check.GreaterOrEqual(-50, -10)
+
 	check.Error(nil)
 	check.ErrorIs(errors.New("random error"), ErrTest)
 	var testErr TestError
