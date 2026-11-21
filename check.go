@@ -26,7 +26,7 @@ func (c *Check) True(value bool, userMsg ...any) bool {
 	c.T.Helper()
 
 	if !value {
-		c.Fail("value is not true", formatMessageAndArgs(userMsg...), nil)
+		c.Fail("value is not true", FormatMessageAndArgs(userMsg...), nil)
 		return false
 	}
 
@@ -37,7 +37,7 @@ func (c *Check) False(value bool, userMsg ...any) bool {
 	c.T.Helper()
 
 	if value {
-		c.Fail("value is not false", formatMessageAndArgs(userMsg...), nil)
+		c.Fail("value is not false", FormatMessageAndArgs(userMsg...), nil)
 		return false
 	}
 
@@ -48,7 +48,7 @@ func (c *Check) Error(value error, userMsg ...any) bool {
 	c.T.Helper()
 
 	if value == nil {
-		c.Fail("value is not an error", formatMessageAndArgs(userMsg...), nil)
+		c.Fail("value is not an error", FormatMessageAndArgs(userMsg...), nil)
 		return false
 	}
 
@@ -61,7 +61,7 @@ func (c *Check) ErrorIs(value, expectedErr error, userMsg ...any) bool {
 	if c.Error(value, userMsg...) {
 		if !errors.Is(value, expectedErr) {
 			c.Fail(fmt.Sprintf("value is not %q", expectedErr.Error()),
-				formatMessageAndArgs(userMsg...),
+				FormatMessageAndArgs(userMsg...),
 				[]string{
 					FormatFailureLine("value:   ", prettyPrint(value)),
 					FormatFailureLine("error:   ", value.Error()),
@@ -80,7 +80,7 @@ func (c *Check) ErrorAs(value error, expectedErr any, userMsg ...any) bool {
 	if c.Error(value, userMsg...) {
 		if !errors.As(value, expectedErr) {
 			c.Fail(fmt.Sprintf("value is not of type %T", expectedErr),
-				formatMessageAndArgs(userMsg...),
+				FormatMessageAndArgs(userMsg...),
 				[]string{
 					FormatFailureLine("value:", prettyPrint(value)),
 					FormatFailureLine("error:", value.Error()),
@@ -96,7 +96,7 @@ func (c *Check) NotError(value error, userMsg ...any) bool {
 	c.T.Helper()
 
 	if value != nil {
-		c.Fail("value is an error", formatMessageAndArgs(userMsg...),
+		c.Fail("value is an error", FormatMessageAndArgs(userMsg...),
 			[]string{
 				FormatFailureLine("value:", prettyPrint(value)),
 				FormatFailureLine("error:", value.Error()),
@@ -111,7 +111,7 @@ func (c *Check) Nil(value any, userMsg ...any) bool {
 	c.T.Helper()
 
 	if !isNil(value) {
-		c.Fail("value is not nil", formatMessageAndArgs(userMsg...),
+		c.Fail("value is not nil", FormatMessageAndArgs(userMsg...),
 			[]string{
 				FormatFailureLine("value:", prettyPrint(value)),
 			})
@@ -125,7 +125,7 @@ func (c *Check) NotNil(value any, userMsg ...any) bool {
 	c.T.Helper()
 
 	if isNil(value) {
-		c.Fail("value is nil", formatMessageAndArgs(userMsg...), nil)
+		c.Fail("value is nil", FormatMessageAndArgs(userMsg...), nil)
 		return false
 	}
 
@@ -136,7 +136,7 @@ func (c *Check) Equal(value1, value2 any, userMsg ...any) bool {
 	c.T.Helper()
 
 	if !gcmp.Equal(value1, value2) {
-		c.Fail("values are not equal", formatMessageAndArgs(userMsg...),
+		c.Fail("values are not equal", FormatMessageAndArgs(userMsg...),
 			[]string{
 				FormatFailureLine("value:   ", prettyPrint(value1)),
 				FormatFailureLine("expected:", prettyPrint(value2)),
@@ -152,7 +152,7 @@ func (c *Check) NotEqual(value1, value2 any, userMsg ...any) bool {
 	c.T.Helper()
 
 	if gcmp.Equal(value1, value2) {
-		c.Fail("values are equal", formatMessageAndArgs(userMsg...),
+		c.Fail("values are equal", FormatMessageAndArgs(userMsg...),
 			[]string{
 				FormatFailureLine("values:", prettyPrint(value1)),
 			})
@@ -168,7 +168,7 @@ func (c *Check) Lesser[T cmp.Ordered](value1, value2 T, userMsg ...any) bool {
 
 	if cmp.Compare(value1, value2) >= 0 {
 		c.Fail("value 1 is not lesser than value 2",
-			formatMessageAndArgs(userMsg...),
+			FormatMessageAndArgs(userMsg...),
 			[]string{
 				FormatFailureLine("value 1:", prettyPrint(value1)),
 				FormatFailureLine("value 2:", prettyPrint(value2)),
@@ -187,7 +187,7 @@ func (c *Check) LesserOrEqual[T cmp.Ordered](
 
 	if cmp.Compare(value1, value2) > 0 {
 		c.Fail("value 1 is not lesser or equal to value 2",
-			formatMessageAndArgs(userMsg...),
+			FormatMessageAndArgs(userMsg...),
 			[]string{
 				FormatFailureLine("value 1:", prettyPrint(value1)),
 				FormatFailureLine("value 2:", prettyPrint(value2)),
@@ -204,7 +204,7 @@ func (c *Check) Greater[T cmp.Ordered](value1, value2 T, userMsg ...any) bool {
 
 	if cmp.Compare(value1, value2) <= 0 {
 		c.Fail("value 1 is not greater than value 2",
-			formatMessageAndArgs(userMsg...),
+			FormatMessageAndArgs(userMsg...),
 			[]string{
 				FormatFailureLine("value 1:", prettyPrint(value1)),
 				FormatFailureLine("value 2:", prettyPrint(value2)),
@@ -223,7 +223,7 @@ func (c *Check) GreaterOrEqual[T cmp.Ordered](
 
 	if cmp.Compare(value1, value2) < 0 {
 		c.Fail("value 1 is not greater or equal to value 2",
-			formatMessageAndArgs(userMsg...),
+			FormatMessageAndArgs(userMsg...),
 			[]string{
 				FormatFailureLine("value 1:", prettyPrint(value1)),
 				FormatFailureLine("value 2:", prettyPrint(value2)),
@@ -277,7 +277,7 @@ func (c *Check) printFailureLine(line string) {
 
 }
 
-func formatMessageAndArgs(msgAndArgs ...any) string {
+func FormatMessageAndArgs(msgAndArgs ...any) string {
 	var msg string
 
 	switch len(msgAndArgs) {
