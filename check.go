@@ -63,9 +63,9 @@ func (c *Check) ErrorIs(value, expectedErr error, userMsg ...any) bool {
 			c.Fail(fmt.Sprintf("value is not %q", expectedErr.Error()),
 				formatMessageAndArgs(userMsg...),
 				[]string{
-					formatValueLine("value:   ", prettyPrint(value)),
-					formatValueLine("error:   ", value.Error()),
-					formatValueLine("expected:", prettyPrint(expectedErr)),
+					FormatFailureLine("value:   ", prettyPrint(value)),
+					FormatFailureLine("error:   ", value.Error()),
+					FormatFailureLine("expected:", prettyPrint(expectedErr)),
 				})
 			return false
 		}
@@ -82,8 +82,8 @@ func (c *Check) ErrorAs(value error, expectedErr any, userMsg ...any) bool {
 			c.Fail(fmt.Sprintf("value is not of type %T", expectedErr),
 				formatMessageAndArgs(userMsg...),
 				[]string{
-					formatValueLine("value:", prettyPrint(value)),
-					formatValueLine("error:", value.Error()),
+					FormatFailureLine("value:", prettyPrint(value)),
+					FormatFailureLine("error:", value.Error()),
 				})
 			return false
 		}
@@ -98,8 +98,8 @@ func (c *Check) NotError(value error, userMsg ...any) bool {
 	if value != nil {
 		c.Fail("value is an error", formatMessageAndArgs(userMsg...),
 			[]string{
-				formatValueLine("value:", prettyPrint(value)),
-				formatValueLine("error:", value.Error()),
+				FormatFailureLine("value:", prettyPrint(value)),
+				FormatFailureLine("error:", value.Error()),
 			})
 		return false
 	}
@@ -113,7 +113,7 @@ func (c *Check) Nil(value any, userMsg ...any) bool {
 	if !isNil(value) {
 		c.Fail("value is not nil", formatMessageAndArgs(userMsg...),
 			[]string{
-				formatValueLine("value:", prettyPrint(value)),
+				FormatFailureLine("value:", prettyPrint(value)),
 			})
 		return false
 	}
@@ -138,8 +138,8 @@ func (c *Check) Equal(value1, value2 any, userMsg ...any) bool {
 	if !gcmp.Equal(value1, value2) {
 		c.Fail("values are not equal", formatMessageAndArgs(userMsg...),
 			[]string{
-				formatValueLine("value:   ", prettyPrint(value1)),
-				formatValueLine("expected:", prettyPrint(value2)),
+				FormatFailureLine("value:   ", prettyPrint(value1)),
+				FormatFailureLine("expected:", prettyPrint(value2)),
 			})
 
 		return false
@@ -154,7 +154,7 @@ func (c *Check) NotEqual(value1, value2 any, userMsg ...any) bool {
 	if gcmp.Equal(value1, value2) {
 		c.Fail("values are equal", formatMessageAndArgs(userMsg...),
 			[]string{
-				formatValueLine("values:", prettyPrint(value1)),
+				FormatFailureLine("values:", prettyPrint(value1)),
 			})
 
 		return false
@@ -170,8 +170,8 @@ func (c *Check) Lesser[T cmp.Ordered](value1, value2 T, userMsg ...any) bool {
 		c.Fail("value 1 is not lesser than value 2",
 			formatMessageAndArgs(userMsg...),
 			[]string{
-				formatValueLine("value 1:", prettyPrint(value1)),
-				formatValueLine("value 2:", prettyPrint(value2)),
+				FormatFailureLine("value 1:", prettyPrint(value1)),
+				FormatFailureLine("value 2:", prettyPrint(value2)),
 			})
 
 		return false
@@ -189,8 +189,8 @@ func (c *Check) LesserOrEqual[T cmp.Ordered](
 		c.Fail("value 1 is not lesser or equal to value 2",
 			formatMessageAndArgs(userMsg...),
 			[]string{
-				formatValueLine("value 1:", prettyPrint(value1)),
-				formatValueLine("value 2:", prettyPrint(value2)),
+				FormatFailureLine("value 1:", prettyPrint(value1)),
+				FormatFailureLine("value 2:", prettyPrint(value2)),
 			})
 
 		return false
@@ -206,8 +206,8 @@ func (c *Check) Greater[T cmp.Ordered](value1, value2 T, userMsg ...any) bool {
 		c.Fail("value 1 is not greater than value 2",
 			formatMessageAndArgs(userMsg...),
 			[]string{
-				formatValueLine("value 1:", prettyPrint(value1)),
-				formatValueLine("value 2:", prettyPrint(value2)),
+				FormatFailureLine("value 1:", prettyPrint(value1)),
+				FormatFailureLine("value 2:", prettyPrint(value2)),
 			})
 
 		return false
@@ -225,8 +225,8 @@ func (c *Check) GreaterOrEqual[T cmp.Ordered](
 		c.Fail("value 1 is not greater or equal to value 2",
 			formatMessageAndArgs(userMsg...),
 			[]string{
-				formatValueLine("value 1:", prettyPrint(value1)),
-				formatValueLine("value 2:", prettyPrint(value2)),
+				FormatFailureLine("value 1:", prettyPrint(value1)),
+				FormatFailureLine("value 2:", prettyPrint(value2)),
 			})
 
 		return false
@@ -261,7 +261,7 @@ func (c *Check) Fail(failureMsg, userMsg string, extraMsgs []string) {
 	}
 }
 
-func formatValueLine(prefix, value string) string {
+func FormatFailureLine(prefix, value string) string {
 	if strings.Contains(value, "\n") {
 		return prefix + "\n" + indent(value, 1)
 	} else {
