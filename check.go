@@ -138,8 +138,8 @@ func (c *Check) Equal(value1, value2 any, userMsg ...any) bool {
 	if !gcmp.Equal(value1, value2) {
 		c.Fail("values are not equal", formatMessageAndArgs(userMsg...),
 			[]string{
-				formatValueLine("value:   ", prettyPrint(value2)),
-				formatValueLine("expected:", prettyPrint(value1)),
+				formatValueLine("value:   ", prettyPrint(value1)),
+				formatValueLine("expected:", prettyPrint(value2)),
 			})
 
 		return false
